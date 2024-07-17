@@ -1,23 +1,32 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import DataView from '../views/DataView.vue'
+// src/router.js
+import { createRouter, createWebHistory } from 'vue-router';
+import Home from '../App.vue';
+import Signin from '../components/Signin.vue';
+import Signup from '../components/Signup.vue';
+import Table from '../components/Table.vue';
 
 const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: HomeView
+  { 
+    path: '/', 
+    component: Signup 
   },
-  {
-    path: '/data',
-    name: 'data',
-    component: DataView
-  }
-]
+  { 
+    path: '/signin', 
+    component: Signin 
+  },
+  { 
+    path: '/signup', 
+    component: Signup 
+  },
+  { 
+    path: '/table', 
+    component: Table 
+  },
+];
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes
-})
+  history: createWebHistory(),
+  routes,
+});
 
-export default router
+export default router;

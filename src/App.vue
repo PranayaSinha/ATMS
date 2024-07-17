@@ -1,48 +1,42 @@
-<script setup>
-import Header from './components/Header.vue'
-import Sidebar from './components/Sidebar.vue'
-import Footer from './components/Footer.vue'
-import { RouterView } from 'vue-router'
+<script>
+
+import Sidebar from './components/Sidebar.vue';
+import Table from './components/Table.vue';
+import Header from './components/Header.vue';
+import Foot from './components/Foot.vue';
+
+export default {
+  name: 'App',
+  components: {
+    Sidebar,
+    Table,
+    Header,
+    Foot
+  }
+};
 </script>
 
 <template>
   <div id="app">
     <Header />
-    <div class="content">
-      <Sidebar />
-      <main>
-        <RouterView />
-      </main>
-    </div>
-    <Footer />
+    <Sidebar />
+    <router-view></router-view>
+    <Foot />
+    
   </div>
 </template>
 
 <style scoped>
-html, body, #app {
-  height: 100%;
-  margin: 0;
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
 }
-
-#app {
-  display: flex;
-  flex-direction: column;
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
 }
-
-.content {
-  display: flex;
-  flex: 1;
-  margin-top: 60px; /* Adjusted for header height */
-  margin-bottom: 40px; /* Adjusted for footer height */
-}
-
-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  margin-left: 200px; /* Adjusted for sidebar width */
-  background-color: #fff;
-  color: #333;
+.logo.vue:hover {
+  filter: drop-shadow(0 0 2em #42b883aa);
 }
 </style>
