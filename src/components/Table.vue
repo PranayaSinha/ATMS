@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+  <div class="w-full px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
     <div class="flex flex-col">
       <div class="-m-1.5 overflow-x-auto">
         <div class="p-1.5 min-w-full inline-block align-middle">
@@ -21,33 +21,32 @@
                 </div>
               </div>
             </div>
-            <table class="min-w-full divide-y divide-gray-200 table-fixed">
+            <table class="min-w-full divide-y divide-gray-200 table-auto">
               <thead class="bg-gray-50">
                 <tr>
-                  <th scope="col" class="px-6 py-3 text-start w-16">
-                    <label for="hs-at-with-checkboxes-main" class="flex items-center">
-                      <input type="checkbox" class="shrink-0 border-gray-300 rounded text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" id="hs-at-with-checkboxes-main">
-                      <span class="sr-only">Checkbox</span>
-                    </label>
+                  <th scope="col" class="px-6 py-3 text-center">
+                    <div class="flex items-center justify-center gap-x-2">
+                      <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">Field</span>
+                    </div>
                   </th>
-                  <th v-for="(heading, index) in headings" :key="index" scope="col" class="px-6 py-3 text-start w-48">
-                    <div class="flex items-center gap-x-2">
-                      <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">{{ heading }}</span>
+                  <th v-for="(record, index) in records" :key="index" scope="col" class="px-6 py-3 text-center">
+                    <div class="flex items-center justify-center gap-x-2">
+                      <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">Record {{ index + 1 }}</span>
+                      <svg @click="openModal(record, index + 1)" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 cursor-pointer text-blue-600 hover:text-blue-800" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 11a1 1 0 012-0v-3a1 1 0 00-2 0v3zm0 4a1 1 0 012-0v-1a1 1 0 00-2 0v1z" />
+                      </svg>
                     </div>
                   </th>
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
-                <tr v-for="record in records" :key="record.id">
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="flex items-center">
-                      <input type="checkbox" class="shrink-0 border-gray-300 rounded text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" :id="'checkbox-' + record.id">
-                      <span class="sr-only">Checkbox</span>
-                    </div>
+                <tr v-for="(heading, index) in headings" :key="index">
+                  <td class="px-6 py-4 whitespace-nowrap text-center align-middle">
+                    <div class="text-sm font-medium text-gray-900">{{ heading }}</div>
                   </td>
-                  <td v-for="(heading, index) in headings" :key="index" class="px-6 py-4 whitespace-nowrap w-48">
+                  <td v-for="(record, recordIndex) in records" :key="recordIndex" class="px-6 py-4 whitespace-nowrap text-center align-middle">
                     <div v-if="Array.isArray(record.fields[heading]) && record.fields[heading][0]?.url">
-                      <img :src="record.fields[heading][0].url" alt="" class="h-10 w-10 rounded-full">
+                      <img :src="record.fields[heading][0].url" alt="" class="h-10 w-10 rounded-full mx-auto">
                     </div>
                     <div v-else>
                       <div class="text-sm font-medium text-gray-900">{{ record.fields[heading] }}</div>
@@ -79,6 +78,51 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal -->
+    <div v-if="showModal" class="fixed inset-0 flex items-center justify-center z-50">
+      <div class="bg-black bg-opacity-50 fixed inset-0"></div>
+      <div class="bg-white border border-gray-200 rounded-xl shadow-lg max-w-7xl mx-auto z-10 p-6 max-h-[90vh] overflow-y-auto">
+        <div class="text-center mb-4">
+          <h2 class="text-xl font-semibold text-gray-800">{{ modalHeading }}</h2>
+        </div>
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead>
+            <tr>
+              <th scope="col" class="px-6 py-3 text-center">
+                <div class="flex items-center justify-center gap-x-2">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">Field</span>
+                </div>
+              </th>
+              <th scope="col" class="px-6 py-3 text-center">
+                <div class="flex items-center justify-center gap-x-2">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">Data</span>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr v-for="(item, index) in modalData" :key="index">
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 text-center">{{ item.heading }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 text-center">
+                <div v-if="Array.isArray(item.data) && item.data[0]?.url">
+                  <img :src="item.data[0].url" alt="" class="h-10 w-10 rounded-full mx-auto">
+                </div>
+                <div v-else>
+                  {{ item.data }}
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="mt-6 flex justify-end">
+          <button @click="showModal = false" type="button" class="py-2 px-4 bg-gray-600 text-white rounded-lg hover:bg-gray-700">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- End Modal -->
   </div>
 </template>
 
@@ -88,6 +132,18 @@ import { fetchRecords } from '../services/airtable';
 
 const records = ref([]);
 const headings = ref([]);
+const showModal = ref(false);
+const modalHeading = ref('');
+const modalData = ref([]);
+
+const openModal = (record, recordIndex) => {
+  modalHeading.value = `Record ${recordIndex}`;
+  modalData.value = headings.value.map(heading => ({
+    heading,
+    data: record.fields[heading]
+  }));
+  showModal.value = true;
+};
 
 onMounted(async () => {
   try {
